@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monday Marketing · IG 內容管理台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: Monday Marketing's own desk — 親切、有活力、專業; bold and quick to scan.
+   IDEA: the brand kit's lime-and-forest pages on a off-white reading ground turned into a working story wall: tickets move left to right.
+   PICTURE: the board itself, three status columns under a heavy uppercase title band.
+   COLOUR and TYPE: brand kit — lime #8CC63F, forest #082B20, on off-white #FAF7F0 for easier reading; Public Sans 900 headings (漁灣體 not on web → Noto Sans HK 900), Public Sans body.
+   LAYOUT: forest masthead with tabs; four views; a ticket opens as a sheet, details left, performance right. */
+:root,:root[data-theme]{color-scheme:light!important;--lime:#8CC63F;--deep:#082B20;--bg:#FAF7F0;--ink:#1a1a17;--mut:#5a5e50;--pan:#F0EDE2;--card:#FFFFFF;--rule:#E4DED0;--acc:#082B20;--soft:#C9E4A3;--up:#2e6b0f;--dn:#b42318;--ov:rgba(8,43,32,.5)}
+:root[data-theme=light],:root[data-theme=dark]{color-scheme:light}
+*{box-sizing:border-box;min-width:0}
+html,body{background:#FAF7F0!important}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Public Sans","Noto Sans HK",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,h4,h5{margin:0;font-weight:700}
+h2{font:900 clamp(24px,3.3vw,36px)/1.15 "Public Sans","Noto Sans HK",sans-serif;text-wrap:balance;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.mast{position:sticky;top:0;z-index:5;background:var(--deep);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:6px 26px;padding:0 max(4vw,16px)}
+.brand{display:flex;align-items:baseline;gap:10px;padding:14px 0}
+.brand b{font:900 21px/1 "Public Sans",sans-serif;letter-spacing:-.02em;text-transform:uppercase}
+.brand span{font:700 14px/1 "Noto Sans HK",sans-serif;color:var(--lime)}
+nav{display:flex;gap:2px;flex-wrap:wrap}
+nav a{color:#b9cfc4;text-decoration:none;padding:16px 11px 13px;border-bottom:4px solid transparent;font-weight:700}
+nav a.on{color:#fff;border-color:var(--lime)}
+.mr{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0}
+.note{font-size:13px;color:var(--mut)}.mast .note{color:#b9cfc4}
+.mast select{background:#0f3d2d;border-color:#2c5e48;color:#fff}
+select,input,textarea{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:9px 11px;min-height:44px;font-size:16px;width:100%}
+textarea{min-height:88px;resize:vertical;line-height:1.5}
+#month{width:auto}
+.btn{background:var(--lime);color:var(--deep);border:0;border-radius:40px;min-height:44px;padding:0 20px;font-weight:800;white-space:nowrap}.btn:hover{filter:brightness(.95)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--rule);font-weight:700}.btn.ghost:hover{background:var(--pan)}
+.btn.del{background:var(--dn);color:#fff;border-color:var(--dn)}
+.btn[disabled]{opacity:.5;cursor:default}
+main{padding:clamp(20px,3vw,40px) max(4vw,16px) 64px;max-width:1440px;margin:0 auto}
+.vhead{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:end;justify-content:space-between;margin-bottom:22px}
+.sub{margin:6px 0 0;color:var(--mut);max-width:70ch}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.view{display:none}.view.on{display:block}
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.col{background:var(--pan);border-radius:16px;padding:12px;min-height:320px;transition:outline-color .15s;outline:2px dashed transparent}
+.col.over{outline-color:var(--acc)}
+.col header{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 10px}
+.col h3,.sp{color:var(--st);background:var(--sc)}
+.col h3{font-size:14px;font-weight:800;padding:5px 14px;border-radius:20px}
+.ct{font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums}
+.drop{display:grid;gap:10px;min-height:120px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px 13px;cursor:grab;position:relative;box-shadow:0 1px 0 var(--rule)}
+.card:hover{border-color:var(--acc)}
+.card.drag{opacity:.4}
+.card h4{font-size:15px;line-height:1.4;margin:8px 0}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;white-space:nowrap}
+.pill::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px var(--rule)}
+.fmt{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--mut)}
+.fmt svg,.ki svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5}.fmt svg .f,.ki svg .f{fill:currentColor;stroke:none}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--mut);align-items:center}
+.er{font-weight:700;font-size:13px;padding:1px 8px;border-radius:12px;margin-left:auto;white-space:nowrap}
+.er.up{color:var(--up);background:color-mix(in srgb,var(--lime) 22%,transparent)}
+.er.dn{color:var(--dn);background:color-mix(in srgb,var(--dn) 12%,transparent)}
+.er.na{color:var(--mut);border:1px dashed var(--rule)}
+.smp{position:absolute;top:-9px;right:10px;font-size:11px;font-weight:700;background:var(--lime);color:var(--deep);border-radius:10px;padding:0 7px}
+.empty{color:var(--mut);font-size:14px;margin:8px 4px}
+.add{margin-top:10px;width:100%;min-height:44px;background:transparent;border:1.5px dashed var(--acc);border-radius:12px;color:var(--acc);font-weight:700}
+.tl{border-top:3px solid var(--ink)}
+.wk{display:grid;grid-template-columns:150px minmax(0,1fr) minmax(0,1fr);gap:12px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.wk.hd{font-size:13px;color:var(--mut);font-weight:700;padding:10px 0}
+.wk.now{background:linear-gradient(90deg,color-mix(in srgb,var(--lime) 20%,transparent),transparent 65%)}
+.wl{display:grid;font-size:14px;padding-left:6px}.wl span{color:var(--mut);font-size:13px;white-space:nowrap}.wl em{color:var(--acc);font-style:normal;font-size:13px;font-weight:800}
+.sl{display:grid;gap:8px;align-content:start}
+.tk{text-align:left;background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:9px 11px;min-height:44px;display:grid;gap:4px;font-size:14px}.tk small{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--mut)}.sp{display:inline-block;font-size:11px;font-weight:800;padding:1px 9px;border-radius:12px}
+.tk b{font-weight:700;margin-right:6px}
+.slot{min-height:44px;border:1px dashed var(--rule);border-radius:12px;background:transparent;color:var(--mut);font-size:14px;display:flex;align-items:center;justify-content:center;padding:6px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.kpi{background:var(--pan);border-radius:16px;padding:14px 16px}.kpi:first-child{background:var(--deep);color:#fff}.kpi:first-child b{color:var(--lime)}.kpi:first-child span,.kpi:first-child small{color:#b9cfc4}.kpi span{font-size:13px;color:var(--mut);font-weight:600}.kpi b{display:block;font:900 clamp(24px,3vw,34px)/1.1 "Public Sans",sans-serif;font-variant-numeric:tabular-nums;margin-top:4px}.kpi small{font-size:13px;color:var(--mut)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:28px}
+.panel h3{font-size:16px;font-weight:900;border-bottom:3px solid var(--ink);padding-bottom:8px;margin-bottom:12px}
+.bars{display:grid;gap:12px}
+.br{display:grid;grid-template-columns:minmax(0,8em) minmax(0,1fr) 4.2em;gap:4px 12px;align-items:center;font-size:14px}
+.bt{height:14px;background:var(--pan);border-radius:8px;overflow:hidden}.bt i{display:block;height:100%;background:var(--lime);border-radius:8px}
+.br:first-child .bt i{background:var(--acc)}
+.bv{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.bn{grid-column:2/4;font-size:12px;color:var(--mut);margin-top:-4px}
+.reads{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.reads li{padding-left:18px;position:relative}.reads li::before{content:"";position:absolute;left:0;top:.6em;width:9px;height:9px;background:var(--lime);border-radius:50%}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:13px;color:var(--mut);font-weight:700;border-bottom:3px solid var(--ink);padding:8px}
+td{border-bottom:1px solid var(--rule);padding:9px 8px;vertical-align:top}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lk{color:var(--acc);background:none;border:0;padding:0;text-align:left;font-weight:700;text-decoration:underline;text-decoration-color:var(--lime);text-decoration-thickness:2px;text-underline-offset:3px}
+.ai{background:var(--pan);border-radius:16px;border:1.5px solid var(--soft);padding:16px 18px;margin-top:28px}
+.ai h5{font-size:15px;font-weight:800;margin:12px 0 4px}.ai h5:first-child{margin-top:0}.ai ul{margin:4px 0;padding-left:20px}.ai p{margin:4px 0}
+.ai .row{margin-bottom:8px}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.tc{border:1px solid var(--rule);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card)}
+.tc.fresh{border:2px solid var(--lime)}
+.tc h4{font:800 18px/1.35 "Public Sans","Noto Sans HK",sans-serif}
+.tc p{margin:0;font-size:14px}.tc p b{display:block;font-size:12px;color:var(--mut);font-weight:700}
+.ki{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:800;color:var(--lime);background:var(--deep);padding:3px 10px;border-radius:12px}
+.new{font-size:11px;font-weight:800;background:var(--lime);color:var(--deep);border-radius:10px;padding:1px 8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}.tags span{font-size:12px;background:var(--pan);border-radius:12px;padding:1px 8px}
+.tc .acts{margin-top:auto;padding-top:4px}
+.tc .btn{min-height:40px;font-size:14px;padding:0 14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{min-height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--rule);background:transparent;font-size:14px;font-weight:600}
+.chip.on{background:var(--deep);color:var(--lime);border-color:var(--deep)}
+.ov{position:fixed;inset:0;background:var(--ov);z-index:20;display:none;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow-y:auto}
+.ov.on{display:flex}
+.sheet{background:var(--bg);border-radius:18px;width:min(1040px,100%);box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden}
+.sh{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;background:var(--deep);color:#fff}
+.sh h3{font:900 21px/1.3 "Public Sans","Noto Sans HK",sans-serif}
+.x{width:44px;height:44px;border-radius:8px;border:1px solid #2c5e48;background:transparent;color:#fff;font-size:22px;line-height:1}
+.sb{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0}
+.sb>div{padding:18px 20px;display:grid;gap:14px;align-content:start}
+.sb>div+div{border-left:1px solid var(--rule);background:color-mix(in srgb,var(--pan) 55%,var(--bg))}
+label{display:grid;gap:5px;font-size:13px;font-weight:700;color:var(--mut)}
+.f3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.mets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mets input{padding:8px}
+.live{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border-radius:10px;overflow:hidden}
+.live div{background:var(--bg);padding:10px 12px}.live span{font-size:12px;color:var(--mut)}.live b{display:block;font:900 22px/1.15 "Public Sans",sans-serif;font-variant-numeric:tabular-nums}.live small{font-size:12px}
+.vs-up{color:var(--up)}.vs-dn{color:var(--dn)}
+.hint{font-size:13px;color:var(--mut);margin:0}
+.sf{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--rule)}
+.sf>div{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--deep);color:#fff;border-left:4px solid var(--lime);padding:10px 16px;border-radius:6px;opacity:0;transition:.2s;z-index:30;font-size:14px;pointer-events:none;max-width:90vw}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.state{padding:40px 20px;text-align:center;color:var(--mut);border:1px dashed var(--rule);border-radius:12px}
+@media(max-width:860px){.board{grid-template-columns:repeat(3,minmax(270px,1fr));overflow-x:auto;padding-bottom:8px}.sb{grid-template-columns:1fr}.sb>div+div{border-left:0;border-top:1px solid var(--rule)}}
+@media(max-width:600px){.wk{grid-template-columns:1fr}.wk.hd{display:none}.sl::before{content:attr(data-l);font-size:12px;color:var(--mut);font-weight:600}.mets{grid-template-columns:repeat(2,minmax(0,1fr))}.f3{grid-template-columns:1fr 1fr}.mr{margin-left:0}table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--rule)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:6em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:5.5em;margin-inline-start:-6em;color:var(--mut)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.authb{color:#fff;border-color:#2c5e48;min-height:40px}.authb:hover{background:#0f3d2d}
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="brand"><b>Monday Marketing</b><span>IG 內容管理台</span></div>
+  <nav><a href="#board" data-v="board">看板</a><a href="#timeline" data-v="timeline">時間表</a><a href="#insights" data-v="insights">數據分析</a><a href="#trends" data-v="trends">趨勢參考</a></nav>
+  <div class="mr"><span class="note" id="note">連線中…</span><button class="btn ghost authb" id="auth" data-act="auth" hidden>團隊登入</button><select id="month" aria-label="月份"></select></div>
+</header>
+<main>
+  <section class="view" id="v-board"></section>
+  <section class="view" id="v-timeline"></section>
+  <section class="view" id="v-insights"></section>
+  <section class="view" id="v-trends"></section>
+</main>
+<div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+{
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STAT=[['planning','計劃中'],['production','製作中'],['published','已發佈']];
+const SC={planning:'--sc:var(--acc);--st:var(--bg)',production:'--sc:var(--soft);--st:var(--ink)',published:'--sc:var(--lime);--st:var(--deep)'};
+const lab=k=>(STAT.find(s=>s[0]===k)||STAT[0])[1];
+const FMT=['Image','Carousel','Reel'];
+const FL={Image:'圖片',Carousel:'Carousel 多圖',Reel:'Reel 短片'};
+const PIL=['Monday Thoughts','Monday Academy','Monday Showcase','Monday Experiment','Chill Monday'];
+const LEG={'Relatable':'Chill Monday','Case study':'Monday Showcase','Insight':'Monday Academy','Behind the scenes':'Monday Thoughts','Trend':'Monday Thoughts'};
+const PD={'Monday Thoughts':'簡單速食：每月熱話、爭議話題、最新潮流/社交媒體功能；目標引起話題、鼓勵 share/repost；受眾中小企老闆及市場營銷人員','Monday Academy':'較資訊性：教學內容、MM 客戶代表分享私人 tips/服務；塑造市場營銷專業形象；受眾市場營銷人員','Monday Showcase':'易明、數字導向：客戶成功故事（老闆遇到嘅困難 → MM 解決方案 → 重點數字/成效）；受眾中小企老闆','Monday Experiment':'新鮮好玩：實測最新工具/功能、比較內容策略、用家角度感受；塑造敢於創新形象；受眾市場營銷人員','Chill Monday':'二次創作：搞笑/經典/熱話重溫、AI 改結局推廣 Monday Marketing、logo ending scene；引起共鳴引入流量；受眾大眾'};
+const PL={'Monday Thoughts':'Monday Thoughts 熱話','Monday Academy':'Monday Academy 學堂','Monday Showcase':'Monday Showcase 案例','Monday Experiment':'Monday Experiment 試新嘢','Chill Monday':'Chill Monday 二創'};
+const fl=k=>FL[k]||k||'';const pl=k=>PL[LEG[k]||k]||k||'未分類';
+const PC={'Monday Thoughts':'var(--lime)','Monday Academy':'var(--acc)','Monday Showcase':'#000','Monday Experiment':'#4F8A1F','Chill Monday':'var(--soft)'};
+const MET=[['reach','觸及人數'],['views','播放次數'],['likes','讚好'],['comments','留言'],['saves','收藏'],['shares','分享'],['follows','新追蹤'],['watch','平均觀看(秒)']];
+const KINDS=['Reel','Carousel','Format','Audio'];
+const KL={Reel:'Reel',Carousel:'Carousel',Format:'玩法',Audio:'音樂'};
+const ico={Image:'<svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><circle cx="6" cy="6" r="1.3" class="f"/></svg>',Carousel:'<svg viewBox="0 0 16 16"><rect x="1.5" y="3" width="10" height="10" rx="2"/><path d="M14 4.5v7"/></svg>',Reel:'<svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="3"/><path d="M6.5 5.3l4 2.7-4 2.7z" class="f"/></svg>'};
+ico.Format=ico.Carousel;ico.Audio='<svg viewBox="0 0 16 16"><path d="M6 12V3l7-1.5v9"/><circle cx="4.5" cy="12" r="1.8" class="f"/><circle cx="11.5" cy="10.5" r="1.8" class="f"/></svg>';
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const now=new Date(),today=iso(now);
+const pd=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,(m||1)-1,d||1)};
+const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return iso(d)};
+const fmtD=s=>{if(!s)return '未定日期';const d=pd(s);return `${d.getMonth()+1}月${d.getDate()}日`};
+const monL=(m,y)=>{const d=pd(m+'-01');return (y?d.getFullYear()+'年':'')+(d.getMonth()+1)+'月'};
+const DOW=['週日','週一','週二','週三','週四','週五','週六'];
+const pct=x=>x==null||!isFinite(x)?'–':(x*100).toFixed(1)+'%';
+const num=x=>x==null||!isFinite(x)?'–':x>=10000?(x/10000).toFixed(1)+'萬':Math.round(x).toLocaleString('en');
+const uid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const S={posts:{},trends:{},static:{},local:{},mode:'loading',canWrite:false,month:today.slice(0,7),view:'board',tf:'All',edit:null,delArm:false};
+const sample=null;
+
+/* ---------- storage ---------- */
+const LS='mm-igdesk-local';
+const CFG=window.MM_CONFIG||{};let sb=null,me=null;
+const lsLoad=()=>{try{const o=JSON.parse(localStorage.getItem(LS)||'{}');S.posts=o.posts||{};S.local=o.trends||{}}catch(e){}};
+const lsSave=()=>{try{localStorage.setItem(LS,JSON.stringify({posts:S.posts,trends:S.local}))}catch(e){}};
+const dbErr=e=>{const m=(e&&e.message)||'';if(/row-level security|permission|42501/i.test(m+(e&&e.code))){S.canWrite=false;note();render();toast('你未有編輯權限，請聯絡 Cherry 加你入編輯名單')}else toast('儲存失敗：'+(m||'請再試一次'))};
+const mergeTrends=()=>{S.trends={...S.static,...S.local}};
+async function put(coll,id,data){if(!S.canWrite){toast('請先登入先可以編輯');return false}
+  if(coll==='trends'){S.local[id]=data;mergeTrends()}else S[coll][id]=data;render();
+  if(sb){const {error}=await sb.from(coll).upsert({id,data,updated_at:new Date().toISOString()});if(error){dbErr(error);return false}}else lsSave();return true}
+async function del(coll,id){if(!S.canWrite)return;if(coll==='trends'){delete S.local[id];mergeTrends()}else delete S[coll][id];render();
+  if(sb){const {error}=await sb.from(coll).delete().eq('id',id);if(error)dbErr(error)}else lsSave()}
+function note(){const n=$('#note'),b=$('#auth');n.textContent=S.mode==='loading'?'連線中…':S.mode==='slow'?'連唔到資料庫，資料可能未更新':S.mode==='demo'?'示範模式：資料只存喺呢個瀏覽器':S.canWrite?'已登入 · 可編輯':me?'已登入 · 只可檢視':'公開檢視';
+  b.hidden=S.mode==='demo';b.textContent=me?'登出':'團隊登入'}
+
+/* ---------- metrics ---------- */
+function calc(p){const m=p.metrics||{},g=k=>+m[k]||0,r=g('reach'),i=g('likes')+g('comments')+g('saves')+g('shares');
+  return {reach:r,views:g('views'),inter:i,er:r?i/r:null,save:r?g('saves')/r:null,share:r?g('shares')/r:null,follows:g('follows'),watch:g('watch')||null,has:r>0}}
+const list=()=>Object.entries(S.posts).map(([id,p])=>({...p,id,pillar:LEG[p.pillar]||p.pillar}));
+const inMonth=p=>S.month==='all'||!p.date||String(p.date).startsWith(S.month);
+function stats(ps){const ms=ps.map(calc).filter(c=>c.has);const mean=k=>{const v=ms.map(c=>c[k]).filter(x=>x!=null&&isFinite(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+  return {n:ms.length,reach:mean('reach'),er:mean('er'),save:mean('save'),share:mean('share'),views:mean('views'),follows:ms.reduce((a,c)=>a+c.follows,0)}}
+const acct=()=>stats(list().filter(p=>p.status==='published'));
+
+/* ---------- views ---------- */
+function months(){const s=new Set([today.slice(0,7)]);if(S.month!=='all')s.add(S.month);
+  for(let i=1;i<=2;i++)s.add(iso(new Date(now.getFullYear(),now.getMonth()+i,1)).slice(0,7));
+  list().forEach(p=>p.date&&s.add(String(p.date).slice(0,7)));return [...s].filter(m=>/^\d{4}-\d{2}$/.test(m)).sort()}
+function renderMonth(){const sel=$('#month');sel.innerHTML='<option value="all">所有月份</option>'+months().map(m=>`<option value="${m}">${monL(m,1)}</option>`).join('');sel.value=S.month}
+
+function card(p,a){const c=calc(p);let b='';
+  if(p.status==='published')b=c.has?`<span class="er ${a.er&&c.er>=a.er?'up':'dn'}" title="互動率（對比帳戶平均）">互動率 ${pct(c.er)}</span>`:'<span class="er na">未填數據</span>';
+  return `<article class="card" draggable="${S.canWrite}" data-id="${esc(p.id)}" data-act="open" tabindex="0">${p.sample?'<span class="smp">示範</span>':''}
+  <div class="row"><span class="pill" style="--c:${PC[p.pillar]||'var(--mut)'}">${esc(pl(p.pillar))}</span><span class="fmt">${ico[p.format]||''}${esc(fl(p.format))}</span></div>
+  <h4>${esc(p.title||'未命名')}</h4>
+  <div class="meta"><span>${fmtD(p.date)}${p.date?' · '+DOW[pd(p.date).getDay()]:''}</span><span>${esc(p.owner||'未分配')}</span>${b}</div></article>`}
+
+function renderBoard(){const a=acct(),ps=list().filter(inMonth).sort((x,y)=>String(x.date||'9').localeCompare(String(y.date||'9')));
+  const pub=ps.filter(p=>p.status==='published').length,m=S.month==='all'?'所有月份':monL(S.month);
+  $('#v-board').innerHTML=`<div class="vhead"><div><h2>${m}：${ps.length} 個 post，已發佈 ${pub} 個</h2><p class="sub">ticket 進度去到邊，就拖去下一欄。㩒入 ticket 可以睇 brief、caption、IG link 同數據。</p></div>
+  <div class="acts">${S.canWrite&&S.month!=='all'?'<button class="btn ghost" data-act="fill">一鍵排滿：每星期 1 圖 + 1 Reel</button>':''}${S.canWrite?'<button class="btn" data-act="new">新增 post</button>':''}</div></div>
+  <div class="board">${STAT.map(([k,l])=>{const col=ps.filter(p=>(p.status||'planning')===k);
+    return `<section class="col" data-col="${k}" style="${SC[k]}"><header><h3>${l}</h3><span class="ct">${col.length} 個</span></header><div class="drop">${col.map(p=>card(p,a)).join('')||`<p class="empty">${k==='planning'?'呢個月仲未有計劃。':'將 ticket 拖嚟呢度。'}</p>`}</div>${k==='planning'&&S.canWrite?'<button class="add" data-act="new">+ 新增 post</button>':''}</section>`}).join('')}</div>`}
+
+function weeks(m){const f=pd(m+'-01'),last=iso(new Date(f.getFullYear(),f.getMonth()+1,0));let s=addD(m+'-01',-((f.getDay()+6)%7));const out=[];while(s<=last){if(addD(s,2).startsWith(m))out.push([s,addD(s,6)]);s=addD(s,7)}return out}
+function renderTimeline(){const m=S.month==='all'?today.slice(0,7):S.month,ws=weeks(m),all=list().filter(p=>p.date);let filled=0,pub=0;
+  const rows=ws.map(([s,e],i)=>{const wk=all.filter(p=>p.date>=s&&p.date<=e),img=wk.filter(p=>p.format!=='Reel'),vid=wk.filter(p=>p.format==='Reel');
+    filled+=(img.length?1:0)+(vid.length?1:0);pub+=wk.filter(p=>p.status==='published').length;const cur=today>=s&&today<=e;
+    const slot=(arr,t)=>arr.length?arr.map(p=>{const st=p.status||'planning';return `<button class="tk" data-act="open" data-id="${esc(p.id)}"><span><b>${fmtD(p.date)}</b>${esc(p.title||'未命名')}</span><small><span class="sp ${esc(st)}" style="${SC[st]||SC.planning}">${lab(st)}</span>${esc(pl(p.pillar))} · ${esc(p.owner||'未分配')}</small></button>`}).join(''):(S.canWrite?`<button class="slot" data-act="slot" data-type="${t}" data-ws="${s}">+ 加${t==='Reel'?' Reel':'圖片 post'}</button>`:'<span class="slot">空</span>');
+    return `<div class="wk${cur?' now':''}"><div class="wl"><b>第 ${i+1} 週</b><span>${fmtD(s)} – ${fmtD(e)}</span>${cur?'<em>今個星期</em>':''}</div><div class="sl" data-l="圖片 / Carousel">${slot(img,'Image')}</div><div class="sl" data-l="Reel">${slot(vid,'Reel')}</div></div>`}).join('');
+  $('#v-timeline').innerHTML=`<div class="vhead"><div><h2>${monL(m)}：${ws.length*2} 個每週位置已排 ${filled} 個</h2><p class="sub">已發佈 ${pub} 個。每週由星期一計到星期日；每個 ticket 嘅顏色標籤代表進度。</p></div>${S.canWrite?'<div class="acts"><button class="btn ghost" data-act="fill">填滿空位</button></div>':''}</div>
+  <div class="tl"><div class="wk hd"><div>週次</div><div>圖片 / Carousel</div><div>Reel</div></div>${rows}</div>`}
+
+function group(ps,fn,keys){return keys.map(k=>({k,...stats(ps.filter(p=>fn(p)===k))})).filter(r=>r.n).sort((a,b)=>(b.er||0)-(a.er||0))}
+function bars(rows,lf=x=>x){if(!rows.length)return '<p class="hint">數據未夠。</p>';const mx=Math.max(...rows.map(r=>r.er||0),1e-6);
+  return `<div class="bars">${rows.map(r=>`<div class="br"><span class="bl">${esc(lf(r.k))}</span><span class="bt"><i style="width:${((r.er||0)/mx*100).toFixed(1)}%"></i></span><span class="bv">${pct(r.er)}</span><span class="bn">平均觸及 ${num(r.reach)} · 收藏率 ${pct(r.save)} · ${r.n} 個 post</span></div>`).join('')}</div>`}
+function insightData(){const pubAll=list().filter(p=>p.status==='published'&&inMonth(p)),ms=pubAll.filter(p=>calc(p).has);
+  return {pubAll,ms,st:stats(ms),byF:group(ms,p=>p.format,FMT),byP:group(ms,p=>p.pillar,PIL),byD:group(ms,p=>p.date?DOW[pd(p.date).getDay()]:'',DOW)}}
+function renderInsights(){const {pubAll,ms,st,byF,byP,byD}=insightData(),scope=S.month==='all'?'所有月份':monL(S.month,1);
+  if(!ms.length){$('#v-insights').innerHTML=`<div class="vhead"><div><h2>${scope}未有已發佈兼有數據嘅 post</h2><p class="sub">打開已發佈嘅 ticket，貼上 IG link，再由 Instagram 洞察報告抄低數字（觸及、讚好、留言、收藏、分享），呢頁就會自動計。</p></div></div>${pubAll.length?`<div class="state">有 ${pubAll.length} 個已發佈 post 等緊填數據。</div>`:''}`;return}
+  const rd=[];
+  if(byF.length>1){const r=[...byF].sort((a,b)=>(b.reach||0)-(a.reach||0)),lo=byF[byF.length-1];rd.push(`<b>${esc(fl(byF[0].k))}</b> 互動率最高（${pct(byF[0].er)}，${esc(fl(lo.k))} 得 ${pct(lo.er)}）。觸及最多人嘅係 ${esc(fl(r[0].k))}（平均 ${num(r[0].reach)}）。`)}
+  if(byP.length>1)rd.push(`<b>${esc(pl(byP[0].k))}</b> 係互動最好嘅內容方向；<b>${esc(pl(byP[byP.length-1].k))}</b> 最弱，放棄之前可以先試吓改 hook。`);
+  const sv=[...ms].sort((a,b)=>calc(b).save-calc(a).save)[0];if(sv)rd.push(`最多人收藏：<button class="lk" data-act="open" data-id="${esc(sv.id)}">${esc(sv.title)}</button>（收藏率 ${pct(calc(sv).save)}）。收藏代表大家想返嚟再睇，呢類可以多啲做。`);
+  if(byD.length>1)rd.push(`暫時 <b>${esc(byD[0].k)}</b> 出嘅 post 表現最好（${pct(byD[0].er)}）。多試幾個星期先當佢係規律。`);
+  const miss=pubAll.length-ms.length;if(miss)rd.push(`有 ${miss} 個已發佈 post 未填數據，填埋佢平均數先準。`);
+  if(ms.length<6)rd.push(`暫時只量度咗 ${ms.length} 個 post，以上只係早期訊號，未係結論。`);
+  const top=[...ms].sort((a,b)=>calc(b).er-calc(a).er);
+  $('#v-insights').innerHTML=`<div class="vhead"><div><h2>${byF.length>1?`${esc(fl(byF[0].k))} 互動最好，${esc(byP[0]?pl(byP[0].k):'')} 係最值得加碼嘅方向`:`${scope}量度咗 ${ms.length} 個 post`}</h2><p class="sub">${scope}已發佈兼有數據嘅 post。互動率 =（讚好 + 留言 + 收藏 + 分享）÷ 觸及人數。</p></div></div>
+  <div class="kpis"><div class="kpi"><span>已量度 post</span><b>${ms.length}</b><small>已發佈共 ${pubAll.length} 個</small></div><div class="kpi"><span>平均觸及</span><b>${num(st.reach)}</b></div><div class="kpi"><span>平均互動率</span><b>${pct(st.er)}</b></div><div class="kpi"><span>平均收藏率</span><b>${pct(st.save)}</b></div><div class="kpi"><span>平均分享率</span><b>${pct(st.share)}</b></div><div class="kpi"><span>新增追蹤</span><b>${num(st.follows)}</b></div></div>
+  <div class="grid2"><div class="panel"><h3>數據話你知</h3><ul class="reads">${rd.map(r=>`<li>${r}</li>`).join('')}</ul></div>
+  <div class="panel"><h3>按格式：互動率</h3>${bars(byF,fl)}</div>
+  <div class="panel"><h3>按內容方向：互動率</h3>${bars(byP,pl)}</div>
+  <div class="panel"><h3>按發佈日子：互動率</h3>${bars(byD)}</div></div>
+  <div class="panel" style="margin-top:28px"><h3>所有已量度 post（由好到差）</h3><div class="scroll"><table class="stack"><thead><tr><th>Post</th><th>格式</th><th>方向</th><th>日期</th><th class="n">觸及</th><th class="n">互動率</th><th class="n">收藏率</th><th class="n">分享率</th></tr></thead><tbody>${top.map(p=>{const c=calc(p);return `<tr><td><button class="lk" data-act="open" data-id="${esc(p.id)}">${esc(p.title||'未命名')}</button></td><td>${esc(fl(p.format))}</td><td>${esc(pl(p.pillar))}</td><td>${fmtD(p.date)}</td><td class="n">${num(c.reach)}</td><td class="n">${pct(c.er)}</td><td class="n">${pct(c.save)}</td><td class="n">${pct(c.share)}</td></tr>`}).join('')}</tbody></table></div></div>
+`}
+
+function renderTrends(){const ts=Object.entries(S.trends).map(([id,t])=>({...t,id})).sort((a,b)=>String(b.added||'').localeCompare(String(a.added||''))),vis=ts.filter(t=>S.tf==='All'||t.kind===S.tf);
+  const dom=u=>{try{return new URL(u).hostname.replace(/^www\./,'')}catch(e){return ''}};
+  $('#v-trends').innerHTML=`<div class="vhead"><div><h2>團隊趨勢參考庫</h2><p class="sub">儲低值得借鏡嘅 Reels、Carousel 同玩法，寫低點解有效、我哋可以點用，再一鍵變做計劃中嘅 ticket。每朝 8 點前會自動加入最新趨勢（綠框 = 今日新增）。</p></div>${S.canWrite?'<div class="acts"><button class="btn" data-act="tnew">新增參考</button></div>':''}</div>
+  <div class="chips" style="margin-bottom:18px">${['All',...KINDS].map(k=>`<button class="chip${S.tf===k?' on':''}" data-act="tf" data-k="${k}">${k==='All'?'全部':KL[k]}</button>`).join('')}</div>
+  ${vis.length?`<div class="tgrid">${vis.map(t=>`<article class="tc${t.auto&&String(t.added||'').slice(0,10)===today?' fresh':''}"><div class="row"><span class="ki">${ico[t.kind]||''}${esc(KL[t.kind]||t.kind||'玩法')}</span>${t.auto?`<span class="new">${String(t.added||'').slice(0,10)===today?'今日新增':'自動更新'} · ${fmtD(String(t.added||'').slice(0,10))}</span>`:t.sample?'<span class="note">預設參考</span>':''}</div><h4>${esc(t.title)}</h4>
+  ${t.why?`<p><b>點解有效</b>${esc(t.why)}</p>`:''}${t.adapt?`<p><b>我哋可以點用</b>${esc(t.adapt)}</p>`:''}
+  ${(t.tags||[]).length?`<div class="tags">${t.tags.map(g=>`<span>${esc(PL[g]||g)}</span>`).join('')}</div>`:''}
+  ${/^https?:\/\//.test(t.url||'')?`<a class="lk" href="${esc(t.url)}" target="_blank" rel="noopener">打開參考 · ${esc(dom(t.url))} ↗</a>`:''}
+  ${S.canWrite?`<div class="acts">${sample?`<button class="btn" data-act="tidea" data-id="${esc(t.id)}">用 Claude 出 post idea</button>`:''}<button class="btn ghost" data-act="tplan" data-id="${esc(t.id)}">加入計劃</button>${t.auto?'':`<button class="btn ghost" data-act="tedit" data-id="${esc(t.id)}">編輯</button>`}</div>`:''}</article>`).join('')}</div>`:`<div class="state">${ts.length?'呢類未有參考。':'未有參考，加一條值得團隊研究嘅 Reel 或 post 啦。'}</div>`}`}
+
+function render(){renderMonth();document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===S.view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+S.view));
+  ({board:renderBoard,timeline:renderTimeline,insights:renderInsights,trends:renderTrends})[S.view]();
+  if(S.edit&&S.edit.kind==='post'&&$('#ov').classList.contains('on'))liveStats()}
+
+/* ---------- ticket sheet ---------- */
+const opt=(arr,v)=>arr.map(x=>{const [k,l]=Array.isArray(x)?x:[x,x];return `<option value="${esc(k)}"${k===v?' selected':''}>${esc(l)}</option>`}).join('');
+function openPost(id,draft){const p=draft||structuredClone(S.posts[id]||{});if(LEG[p.pillar])p.pillar=LEG[p.pillar];if(!draft&&!S.posts[id])return;S.edit={kind:'post',id:id||uid('p'),isNew:!!draft,p};S.delArm=false;
+  const owners=[...new Set(list().map(x=>x.owner).filter(Boolean))],m=p.metrics||{},ro=S.canWrite?'':' disabled';
+  $('#sheet').innerHTML=`<div class="sh"><h3>${S.edit.isNew?'新增 post':esc(p.title||'未命名')}</h3><button class="x" data-act="close" aria-label="關閉">×</button></div>
+  <form id="pf" class="sb"><div>
+   <label>標題<input name="title" value="${esc(p.title)}" placeholder="例如：客話要大啲個logo"${ro}></label>
+   <div class="f3"><label>進度<select name="status"${ro}>${opt(STAT,p.status||'planning')}</select></label><label>格式<select name="format"${ro}>${opt(FMT.map(k=>[k,FL[k]]),p.format||'Image')}</select></label><label>內容方向<select name="pillar"${ro}>${opt(PIL.map(k=>[k,PL[k]]),p.pillar||'Monday Thoughts')}</select></label></div>
+   <div class="f2"><label>發佈日期<input type="date" name="date" value="${esc(p.date)}"${ro}></label><label>負責人<input name="owner" list="owners" value="${esc(p.owner)}" placeholder="邊個跟"${ro}><datalist id="owners">${owners.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></label></div>
+   <label>Brief / 概念<textarea name="brief" placeholder="Hook、重點訊息、shot list 或每頁內容"${ro}>${esc(p.brief)}</textarea></label>
+   <label>Caption<textarea name="caption" placeholder="Caption 初稿"${ro}>${esc(p.caption)}</textarea></label>
+   <div class="f2"><label>Hashtag / 關鍵字<input name="tags" value="${esc(p.tags)}"${ro}></label><label>素材連結<input name="assets" value="${esc(p.assets)}" placeholder="Drive / Canva link"${ro}></label></div>
+   ${/^https?:\/\//.test(p.assets||'')?`<a class="lk" href="${esc(p.assets)}" target="_blank" rel="noopener">打開素材 ↗</a>`:''}
+  </div><div>
+   <label>Instagram 連結<input name="igUrl" value="${esc(p.igUrl)}" placeholder="https://www.instagram.com/p/…"${ro}></label>
+   ${/^https?:\/\/(www\.)?instagram\.com\//.test(p.igUrl||'')?`<a class="lk" href="${esc(p.igUrl)}" target="_blank" rel="noopener">喺 Instagram 打開 ↗</a>`:''}
+   <p class="hint">Instagram 唔俾其他網站直接讀 post 數據，所以要喺 app 入面 post 下面撳<b>「查看洞察報告」</b>抄低數字，大約 30 秒。建議發佈後 7 日先填。</p>
+   <div class="mets">${MET.map(([k,l])=>`<label>${l}<input type="number" min="0" inputmode="numeric" name="m_${k}" value="${esc(m[k]??'')}"${ro}></label>`).join('')}</div>
+   <div class="live" id="live"></div>
+  </div></form>
+  <div class="sf"><div>${!S.edit.isNew&&S.canWrite?'<button class="btn ghost" data-act="pdel">刪除</button>':''}</div><div><button class="btn ghost" data-act="close">${S.canWrite?'取消':'關閉'}</button>${S.canWrite?'<button class="btn" data-act="psave">儲存</button>':''}</div></div>`;
+  showOv();liveStats()}
+function readPost(){const f=$('#pf');if(!f)return null;const g=n=>f.elements[n]?f.elements[n].value.trim():'';const p={...S.edit.p};
+  ['title','status','format','pillar','date','owner','brief','caption','tags','assets','igUrl'].forEach(k=>p[k]=g(k));
+  const m={};MET.forEach(([k])=>{const v=g('m_'+k);if(v!=='')m[k]=Math.max(0,+v)});p.metrics=m;return p}
+function liveStats(){const el=$('#live');if(!el)return;const p=readPost()||S.edit.p,c=calc(p),a=acct();
+  const vs=(v,av)=>v==null||!av?'':`<small class="${v>=av?'vs-up':'vs-dn'}">${v>=av?'▲':'▼'} ${(Math.abs(v/av-1)*100).toFixed(0)}%（平均 ${pct(av)}）</small>`;
+  el.innerHTML=c.has?`<div><span>互動率</span><b>${pct(c.er)}</b>${vs(c.er,a.er)}</div><div><span>收藏率</span><b>${pct(c.save)}</b>${vs(c.save,a.save)}</div><div><span>分享率</span><b>${pct(c.share)}</b>${vs(c.share,a.share)}</div><div><span>觸及人數</span><b>${num(c.reach)}</b>${a.reach?`<small class="${c.reach>=a.reach?'vs-up':'vs-dn'}">平均 ${num(a.reach)}</small>`:''}</div>`:'<div style="grid-column:1/-1"><span>最少填觸及人數，就會計到互動率、收藏率同分享率，同帳戶平均比較。</span></div>'}
+async function savePost(close=true){const p=readPost();if(!p)return;if(!p.title){toast('請先填標題');return}
+  if(p.status==='published'&&!p.date)p.date=today;p.updated=new Date().toISOString();delete p.id;
+  const ok=await put('posts',S.edit.id,p);if(ok){S.edit.p=p;S.edit.isNew=false;if(close)closeOv();toast('已儲存')}return ok}
+
+/* ---------- trend sheet ---------- */
+function openTrend(id){const t=id?structuredClone(S.trends[id]||{}):{kind:'Reel'};S.edit={kind:'trend',id:id||uid('t'),isNew:!id,t};S.delArm=false;
+  $('#sheet').innerHTML=`<div class="sh"><h3>${id?'編輯參考':'新增趨勢參考'}</h3><button class="x" data-act="close" aria-label="關閉">×</button></div>
+  <form id="tf" style="padding:18px 20px;display:grid;gap:14px">
+   <div class="f2"><label>標題<input name="title" value="${esc(t.title)}" placeholder="係咩趨勢？"></label><label>類型<select name="kind">${opt(KINDS.map(k=>[k,KL[k]]),t.kind)}</select></label></div>
+   <label>例子 post / Reel 連結<input name="url" value="${esc(t.url)}" placeholder="https://www.instagram.com/reel/…"></label>
+   <label>點解有效<textarea name="why">${esc(t.why)}</textarea></label>
+   <label>我哋可以點用<textarea name="adapt">${esc(t.adapt)}</textarea></label>
+   <label>標籤（用逗號分隔）<input name="tags" value="${esc((t.tags||[]).join(', '))}"></label></form>
+  <div class="sf"><div>${id?'<button class="btn ghost" data-act="tdel">刪除</button>':''}</div><div><button class="btn ghost" data-act="close">取消</button><button class="btn" data-act="tsave">儲存</button></div></div>`;showOv()}
+async function saveTrend(){const f=$('#tf'),g=n=>f.elements[n].value.trim();if(!g('title')){toast('請先填標題');return}
+  const t={...S.edit.t,title:g('title'),kind:g('kind'),url:g('url'),why:g('why'),adapt:g('adapt'),tags:g('tags').split(/[,，]/).map(s=>s.trim()).filter(Boolean).slice(0,8)};
+  if(!t.added)t.added=new Date().toISOString();delete t.id;if(await put('trends',S.edit.id,t)){closeOv();toast('已儲存')}}
+
+/* ---------- Claude ---------- */
+function md(t){const lines=esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').split(/\n+/);let h='',ul=false;
+  for(const l0 of lines){const l=l0.trim();if(!l)continue;if(/^[-•*]\s+/.test(l)){if(!ul){h+='<ul>';ul=true}h+='<li>'+l.replace(/^[-•*]\s+/,'')+'</li>';continue}
+    if(ul){h+='</ul>';ul=false}h+=/^(#+\s*)?<b>[^<]+<\/b>[:：]?$/.test(l)||/^#+\s/.test(l)?'<h5>'+l.replace(/^#+\s*/,'').replace(/<\/?b>/g,'')+'</h5>':'<p>'+l+'</p>'}
+  return h+(ul?'</ul>':'')}
+/* ---------- actions ---------- */
+function showOv(){$('#ov').classList.add('on');document.body.style.overflow='hidden';setTimeout(()=>{const i=$('#sheet input');i&&S.edit&&S.edit.isNew&&i.focus()},30)}
+function closeOv(){$('#ov').classList.remove('on');document.body.style.overflow='';S.edit=null}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
+async function fill(){const m=S.month==='all'?today.slice(0,7):S.month,all=list();let n=0;
+  for(const [s,e] of weeks(m)){const wk=all.filter(p=>p.date&&p.date>=s&&p.date<=e);
+    for(const [t,off] of [['Image',2],['Reel',4]]){const d=addD(s,off);if(wk.some(p=>t==='Reel'?p.format==='Reel':p.format!=='Reel'))continue;
+      if(await put('posts',uid('p'),{title:`${t==='Reel'?'Reel':'圖片 post'} · ${fmtD(s)}嗰星期`,format:t,pillar:t==='Reel'?'Chill Monday':'Monday Academy',status:'planning',date:d,owner:'',updated:new Date().toISOString()}))n++}}
+  toast(n?`已加 ${n} 個位置入計劃中`:'每個星期已經有圖片同 Reel')}
+const arm=el=>{if(!S.delArm){S.delArm=true;el.textContent='再按一次確認刪除';el.classList.add('del');return false}return true};
+document.addEventListener('click',async e=>{const el=e.target.closest('[data-act]');if(!el)return;const a=el.dataset.act,id=el.dataset.id;
+  if(a==='open')openPost(id);
+  else if(a==='new')openPost(null,{status:'planning',format:'Image',pillar:'Monday Thoughts',date:S.month!=='all'&&!today.startsWith(S.month)?S.month+'-01':today});
+  else if(a==='slot')openPost(null,{status:'planning',format:el.dataset.type,pillar:el.dataset.type==='Reel'?'Chill Monday':'Monday Academy',date:addD(el.dataset.ws,el.dataset.type==='Reel'?4:2)});
+  else if(a==='fill'){el.disabled=true;await fill();el.disabled=false}
+  else if(a==='close')closeOv();
+  else if(a==='psave')savePost();
+  else if(a==='pdel'){if(arm(el)){await del('posts',S.edit.id);closeOv();toast('已刪除')}}
+  else if(a==='tf'){S.tf=el.dataset.k;render()}
+  else if(a==='tnew')openTrend();
+  else if(a==='tedit')openTrend(id);
+  else if(a==='tsave')saveTrend();
+  else if(a==='auth'){authClick()}
+  else if(a==='login'){sendLink(el)}
+  else if(a==='tdel'){if(arm(el)){await del('trends',S.edit.id);closeOv();toast('已刪除')}}
+  else if(a==='tplan'){const t=S.trends[id];if(t)openPost(null,{title:'趨勢：'+t.title,format:t.kind==='Reel'||t.kind==='Audio'?'Reel':'Carousel',pillar:'Monday Thoughts',status:'planning',brief:[t.adapt,t.url?'參考：'+t.url:''].filter(Boolean).join('\n\n'),date:''})}});
+$('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeOv()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#ov').classList.contains('on'))closeOv();if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('card'))openPost(e.target.dataset.id)});
+document.addEventListener('input',e=>{if(e.target.closest('#pf'))liveStats()});
+$('#month').addEventListener('change',e=>{S.month=e.target.value;render()});
+let dragId=null;
+document.addEventListener('dragstart',e=>{const c=e.target.closest&&e.target.closest('.card');if(!c||!S.canWrite)return;dragId=c.dataset.id;c.classList.add('drag');try{e.dataTransfer.setData('text/plain',dragId);e.dataTransfer.effectAllowed='move'}catch(x){}});
+document.addEventListener('dragend',()=>{document.querySelectorAll('.drag,.over').forEach(x=>x.classList.remove('drag','over'));dragId=null});
+document.addEventListener('dragover',e=>{const col=e.target.closest&&e.target.closest('.col');if(!col||!dragId)return;e.preventDefault();document.querySelectorAll('.col.over').forEach(x=>x!==col&&x.classList.remove('over'));col.classList.add('over')});
+document.addEventListener('drop',async e=>{const col=e.target.closest&&e.target.closest('.col');if(!col||!dragId)return;e.preventDefault();const p=S.posts[dragId],st=col.dataset.col,id=dragId;dragId=null;col.classList.remove('over');
+  if(!p||p.status===st)return;const np={...p,status:st,updated:new Date().toISOString()};if(st==='published'&&!np.date)np.date=today;await put('posts',id,np);
+  if(st==='published'&&!calc(np).has)toast('已發佈！遲啲記得打開 ticket 填 IG link 同數據')});
+const route=()=>{const h=location.hash.slice(1);S.view=['board','timeline','insights','trends'].includes(h)?h:'board';render()};
+addEventListener('hashchange',route);
+
+/* ---------- auth ---------- */
+function authClick(){if(me){sb.auth.signOut();return}
+  $('#sheet').innerHTML=`<div class="sh"><h3>團隊登入</h3><button class="x" data-act="close" aria-label="關閉">×</button></div>
+  <form id="lf" style="padding:20px;display:grid;gap:14px"><p class="hint" style="font-size:15px">輸入你嘅公司 email，我哋會寄一條登入連結俾你。只有編輯名單上嘅同事登入後先可以改內容，其他人只可以睇。</p>
+  <label>Email<input type="email" name="email" required autocomplete="email" placeholder="name@company.com"></label></form>
+  <div class="sf"><div></div><div><button class="btn ghost" data-act="close">取消</button><button class="btn" data-act="login">寄登入連結</button></div></div>`;S.edit={kind:'login',isNew:true};showOv()}
+async function sendLink(btn){const v=$('#lf').elements.email.value.trim();if(!/^\S+@\S+\.\S+$/.test(v)){toast('請輸入正確 email');return}
+  btn.disabled=true;const {error}=await sb.auth.signInWithOtp({email:v,options:{emailRedirectTo:location.origin+location.pathname}});btn.disabled=false;
+  if(error)toast('寄唔到：'+error.message);else{closeOv();toast('已寄出，去 email 撳連結就登入到')}}
+async function checkEditor(){S.canWrite=false;if(me){const {data}=await sb.from('editors').select('email').eq('email',me.email.toLowerCase()).maybeSingle();S.canWrite=!!data}note();render()}
+
+/* ---------- start ---------- */
+route();
+(window.fetch?fetch('trends.json',{cache:'no-store'}):Promise.reject()).then(r=>r.ok?r.json():[]).then(a=>{const o={};(Array.isArray(a)?a:[]).forEach(t=>{if(t&&t.id&&t.title)o[t.id]={...t,auto:t.auto!==false}});S.static=o;mergeTrends();render()}).catch(()=>{});
+(async()=>{
+  if(!CFG.supabaseUrl||!CFG.supabaseAnonKey||!window.supabase){S.mode='demo';S.canWrite=true;lsLoad();mergeTrends();note();render();return}
+  sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
+  const timer=setTimeout(()=>{if(S.mode==='loading'){S.mode='slow';note()}},10000);
+  const load=async coll=>{const {data,error}=await sb.from(coll).select('id,data');if(error){S.mode='slow';note();return}const o={};data.forEach(r=>{if(r.data)o[r.id]=r.data});if(coll==='trends'){S.local=o;mergeTrends()}else S[coll]=o};
+  await Promise.all([load('posts'),load('trends')]);clearTimeout(timer);if(S.mode==='loading')S.mode='live';
+  sb.channel('mm-desk').on('postgres_changes',{event:'*',schema:'public',table:'posts'},()=>load('posts').then(render)).on('postgres_changes',{event:'*',schema:'public',table:'trends'},()=>load('trends').then(render)).subscribe();
+  const {data:{session}}=await sb.auth.getSession();me=session?session.user:null;await checkEditor();
+  sb.auth.onAuthStateChange((_e,s)=>{const u=s?s.user:null;if((u&&u.id)!==(me&&me.id)){me=u;checkEditor();if(u)toast('登入咗：'+u.email)}});
+  note();render()})();
+}
+</script>
+</body>
+</html>
